@@ -42,6 +42,17 @@ def determine_birth_message(birth_path_number)
 	display_message = "Your birth path number is: #{birth_path_number}. This means... #{message}"
 end
 	
+get '/' do
+	erb :form
+end
+
+post '/' do
+	date_of_birth = params[:date_of_birth]
+	@birth_path_number = determine_users_birth_path(date_of_birth)
+	@birth_message = determine_birth_message(@birth_path_number)
+	erb :index
+end
+
 get '/messages/' do
 	erb :messages
 end
