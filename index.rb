@@ -39,7 +39,12 @@ def determine_birth_message(birth_path_number)
 	else
 		message =  "Something strange has happened"
 	end
-	display_message = "Your birth path number is: #{birth_path_number}. This means... #{message}"
+end
+
+def setup_index_view
+	@birth_path_number = determine_users_birth_path(params[:date_of_birth].gsub("-",""))
+	@birth_message = determine_birth_message(@birth_path_number)
+	erb :index
 end
 	
 get '/' do
@@ -47,8 +52,12 @@ get '/' do
 end
 
 post '/' do
-	date_of_birth = params[:date_of_birth]
-	@birth_path_number = determine_users_birth_path(date_of_birth)
+	@birth_path_number = determine_users_birth_path(params[:date_of_birth].gsub("-",""))
+	redirect "message/#{@birth_path_number}"
+end
+
+get '/message/:birth_path_number' do
+	@birth_path_number = params[:birth_path_number].to_i
 	@birth_message = determine_birth_message(@birth_path_number)
 	erb :index
 end
@@ -58,8 +67,5 @@ get '/messages/' do
 end
 
 get '/:date_of_birth' do
-	date_of_birth = params[:date_of_birth]
-	@birth_path_number = determine_users_birth_path(date_of_birth)
-	@birth_message = determine_birth_message(@birth_path_number)
-	erb :index
+	setup_index_view	
 end
