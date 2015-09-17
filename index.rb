@@ -1,5 +1,13 @@
 require 'sinatra'
 
+def valid_date_of_birth(input)
+	if input.length == 8 && input.match(/^[0-9]+[0-9]$/)
+		return true
+	else
+		return false
+	end
+end
+
 def determine_users_birth_path(dob)
 	birth_path = 0
 	(0..dob.length.to_i-1).each do |i|
@@ -52,8 +60,15 @@ get '/' do
 end
 
 post '/' do
-	@birth_path_number = determine_users_birth_path(params[:date_of_birth].gsub("-",""))
-	redirect "message/#{@birth_path_number}"
+	date_of_birth = params[:date_of_birth].gsub("-","")
+	@error = nil
+	if valid_date_of_birth(date_of_birth)
+		@birth_path_number = determine_users_birth_path(date_of_birth)
+		redirect "message/#{@birth_path_number}"
+	else
+		@error = "Please type the date in ddmmyyyy format"
+		erb :form
+	end
 end
 
 get '/message/:birth_path_number' do
